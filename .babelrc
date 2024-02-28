@@ -1,0 +1,14 @@
+{
+    "presets": ["@babel/preset-env"]
+}
+
+/*Tập tin .babelrc là một tập tin cấu hình cho Babel,
+ một công cụ biên dịch mã JavaScript.
+  Babel được sử dụng để chuyển đổi mã JavaScript 
+  từ các phiên bản mới nhất (ES6, ES7, ES8, etc.) 
+  thành các phiên bản cũ hơn có thể chạy trên các trình 
+  duyệt hoặc môi trường JavaScript không hỗ trợ các tính năng mới.*/
+
+/*Presets: Đây là một tập hợp các plugin được nhóm lại để dễ dàng sử dụng. Ví dụ, @babel/preset-env cho phép
+ bạn chỉ định các tính năng JavaScript mà bạn muốn sử dụng và Babel sẽ tự động chuyển đổi mã của bạn để hoạt 
+ động trên các trình duyệt hoặc môi trường cụ thể.*/
