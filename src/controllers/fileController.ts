@@ -6,6 +6,7 @@ class FileStory {
         try {
             console.log(req.body, 'body_ol');
             // Generate a unique filename using UUID
+
             if (req.body.old_id) {
                 const filePath = path.join(__dirname, '../../uploads/images', req.body.old_id + req.body.tail); // Path to the uploaded file
                 // File does not exist, continue with the current filename
@@ -16,14 +17,23 @@ class FileStory {
                         console.error('deleting file successful');
                     }
                 });
+            } else if (req.body.old_ids) {
+                req.body.old_ids.map((id: string) => {
+                    const filePath = path.join(__dirname, '../../uploads/images', id + req.body.tail); // Path to the uploaded file
+                    // File does not exist, continue with the current filename
+                    fs.unlink(filePath, (err) => {
+                        if (err) {
+                            console.error('Error deleting file:', err);
+                        } else {
+                            console.error('deleting file successful');
+                        }
+                    });
+                });
             }
-            const filePath = path.join(__dirname, '../../uploads/images', `${req.body.id_file + req.body.tail}`); // Path to the uploaded file
-            fs.access(filePath, fs.constants.F_OK, (err) => {
-                if (err) {
-                    return res.status(404).json(false);
-                }
-                return res.status(200).json(req.body.id_file);
-            });
+            if (req.body.ids.length)
+                // id from fileWorker.ts
+                return res.status(200).json(req.body.ids);
+            return res.status(404).json(false);
         } catch (error) {
             console.error('Error reading file:', error);
             next(error);
@@ -36,7 +46,7 @@ class FileStory {
             res.sendFile(filePath, (err) => {
                 if (err) {
                     console.error('Error sending file:', err);
-                    res.status(404).send('File not found');
+                    res.status(404).json({ message: false });
                 }
             });
         } catch (error) {
@@ -46,7 +56,7 @@ class FileStory {
     };
     deleteFile = (req: express.Request, res: express.Response, next: express.NextFunction) => {
         try {
-            const fileId = req.body.id_file;
+            const fileId = req.body.id;
             const filePath = path.join(__dirname, '../../uploads/images', fileId + '.png'); // Path to the uploaded file
             // File does not exist, continue with the current filename
             fs.unlink(filePath, (err) => {
