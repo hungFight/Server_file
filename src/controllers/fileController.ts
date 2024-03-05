@@ -13,6 +13,7 @@ class FileStory {
                 fs.unlink(filePath, (err) => {
                     if (err) {
                         console.error('Error deleting file:', err);
+                        return res.status(500).json(false);
                     } else {
                         console.error('deleting file successful');
                     }
@@ -24,6 +25,7 @@ class FileStory {
                     fs.unlink(filePath, (err) => {
                         if (err) {
                             console.error('Error deleting file:', err);
+                            return res.status(500).json(false);
                         } else {
                             console.error('deleting file successful');
                         }
@@ -56,16 +58,18 @@ class FileStory {
     };
     deleteFile = (req: express.Request, res: express.Response, next: express.NextFunction) => {
         try {
-            const fileId = req.body.id;
-            const filePath = path.join(__dirname, '../../uploads/images', fileId + '.png'); // Path to the uploaded file
-            // File does not exist, continue with the current filename
-            fs.unlink(filePath, (err) => {
-                if (err) {
-                    console.error('Error deleting file:', err);
-                    return res.status(500).json(false);
-                }
-                return res.status(200).json(true);
+            const fileIds: string[] = req.body.ids;
+            fileIds.forEach((f) => {
+                const filePath = path.join(__dirname, '../../uploads/images', f + '.png'); // Path to the uploaded file
+                // File does not exist, continue with the current filename
+                fs.unlink(filePath, (err) => {
+                    if (err) {
+                        console.error('Error deleting file:', err);
+                        return res.status(500).json(false);
+                    }
+                });
             });
+            return res.status(200).json(true);
         } catch (error) {
             console.error('Error reading file:', error);
             next(error);
