@@ -9,27 +9,32 @@ class FileStory {
 
             if (req.body.old_id) {
                 const filePath = path.join(__dirname, '../../uploads/images', req.body.old_id + req.body.tail); // Path to the uploaded file
-                // File does not exist, continue with the current filename
-                fs.unlink(filePath, (err) => {
-                    if (err) {
-                        console.error('Error deleting file:', err);
-                        return res.status(500).json(false);
-                    } else {
-                        console.error('deleting file successful');
+                fs.access(filePath, fs.constants.F_OK, (err) => {
+                    if (!err) {
+                        fs.unlink(filePath, (err) => {
+                            if (err) {
+                                console.error('Error deleting file:', err);
+                            } else {
+                                console.error('deleting file successful');
+                            }
+                        });
                     }
                 });
+                // File does not exist, continue with the current filename
             } else if (req.body.old_ids) {
                 req.body.old_ids.map((id: string) => {
                     const filePath = path.join(__dirname, '../../uploads/images', id + req.body.tail); // Path to the uploaded file
-                    // File does not exist, continue with the current filename
-                    fs.unlink(filePath, (err) => {
-                        if (err) {
-                            console.error('Error deleting file:', err);
-                            return res.status(500).json(false);
-                        } else {
-                            console.error('deleting file successful');
-                        }
+                    fs.access(filePath, fs.constants.F_OK, (err) => {
+                        if (!err)
+                            fs.unlink(filePath, (err) => {
+                                if (err) {
+                                    console.error('Error deleting file:', err);
+                                } else {
+                                    console.error('deleting file successful');
+                                }
+                            });
                     });
+                    // File does not exist, continue with the current filename
                 });
             }
             if (req.body.ids.length)
@@ -62,11 +67,14 @@ class FileStory {
             fileIds.forEach((f) => {
                 const filePath = path.join(__dirname, '../../uploads/images', f + '.png'); // Path to the uploaded file
                 // File does not exist, continue with the current filename
-                fs.unlink(filePath, (err) => {
-                    if (err) {
-                        console.error('Error deleting file:', err);
-                        return res.status(500).json(false);
-                    }
+                fs.access(filePath, fs.constants.F_OK, (err) => {
+                    if (!err)
+                        fs.unlink(filePath, (err) => {
+                            if (err) {
+                                console.error('Error deleting file:', err);
+                                return res.status(500).json(false);
+                            }
+                        });
                 });
             });
             return res.status(200).json(true);
