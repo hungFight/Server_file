@@ -16,6 +16,8 @@ const storage = multer.diskStorage({
         try {
             req.body.ids = [...(req.body.ids ?? [])];
             console.log(req.body, file, 'files');
+            const title = req.body.title;
+            const id_sort = req.body.id_sort;
             const filename = primaryKey();
             const typeImage = file.mimetype.split('/')[0] === 'image';
             const tail = typeImage ? '.png' : '.mp4';
@@ -30,6 +32,8 @@ const storage = multer.diskStorage({
                         id: newFilename,
                         type: file.mimetype.split('/')[0],
                         tail: typeImage ? 'png' : file.mimetype.split('/')[1],
+                        title: title === 'ok' ? file.originalname : undefined,
+                        id_sort,
                     });
                     req.body.type = file.mimetype.split('/')[0];
                     req.body.tail = tail;
@@ -38,7 +42,9 @@ const storage = multer.diskStorage({
                     req.body.ids.push({
                         id: filename,
                         type: file.mimetype.split('/')[0],
+                        title: title === 'ok' ? file.originalname : undefined,
                         tail: typeImage ? 'png' : file.mimetype.split('/')[1],
+                        id_sort,
                     });
                     req.body.type = file.mimetype.split('/')[0];
                     req.body.tail = tail;

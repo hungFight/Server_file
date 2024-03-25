@@ -4,6 +4,7 @@ import upload from '../../middleware/fileWorker';
 
 const router = express.Router();
 router.post('/addFiles', upload.single('file'), fileController.addFile);
-router.get('/getFile/:id', fileController.getFile);
-router.post('/deleteFile', fileController.deleteFile);
+router.get('/getFileImg/:id', fileController.getFileImg);
+router.get('/getFileVideo/:id', fileController.getFileVideo);
+router.post('/deleteFileImg', fileController.deleteFileImg);
 export default router;

@@ -6,9 +6,12 @@ class FileStory {
         try {
             console.log(req.body, 'body_ol');
             // Generate a unique filename using UUID
-
             if (req.body.old_id) {
-                const filePath = path.join(__dirname, '../../uploads/images', req.body.old_id + req.body.tail); // Path to the uploaded file
+                const filePath = path.join(
+                    __dirname,
+                    req.body.type === 'image' ? '../../uploads/images' : '../../uploads/video',
+                    req.body.old_id + req.body.tail,
+                ); // Path to the uploaded file
                 fs.access(filePath, fs.constants.F_OK, (err) => {
                     if (!err) {
                         fs.unlink(filePath, (err) => {
@@ -23,7 +26,11 @@ class FileStory {
                 // File does not exist, continue with the current filename
             } else if (req.body.old_ids) {
                 req.body.old_ids.map((id: string) => {
-                    const filePath = path.join(__dirname, '../../uploads/images', id + req.body.tail); // Path to the uploaded file
+                    const filePath = path.join(
+                        __dirname,
+                        req.body.type === 'image' ? '../../uploads/images' : '../../uploads/video',
+                        id + req.body.tail,
+                    ); // Path to the uploaded file
                     fs.access(filePath, fs.constants.F_OK, (err) => {
                         if (!err)
                             fs.unlink(filePath, (err) => {
@@ -46,7 +53,7 @@ class FileStory {
             next(error);
         }
     };
-    getFile = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    getFileImg = (req: express.Request, res: express.Response, next: express.NextFunction) => {
         try {
             const fileId = req.params.id;
             const filePath = path.join(__dirname, '../../uploads/images', fileId + '.png'); // Path to the uploaded file
@@ -61,7 +68,22 @@ class FileStory {
             next(error);
         }
     };
-    deleteFile = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    getFileVideo = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        try {
+            const fileId = req.params.id;
+            const filePath = path.join(__dirname, '../../uploads/videos', fileId + '.mp4'); // Path to the uploaded file
+            res.sendFile(filePath, (err) => {
+                if (err) {
+                    console.error('Error sending file:', err);
+                    res.status(404).json({ message: false });
+                }
+            });
+        } catch (error) {
+            console.error('Error reading file:', error);
+            next(error);
+        }
+    };
+    deleteFileImg = (req: express.Request, res: express.Response, next: express.NextFunction) => {
         try {
             const fileIds: string[] = req.body.ids;
             fileIds.forEach((f) => {
@@ -77,6 +99,7 @@ class FileStory {
                         });
                 });
             });
+
             return res.status(200).json(true);
         } catch (error) {
             console.error('Error reading file:', error);
