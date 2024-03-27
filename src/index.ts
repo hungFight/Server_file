@@ -4,6 +4,7 @@ import cors from 'cors';
 import express from 'express';
 import morgan from 'morgan';
 import routes from './routes';
+import errorHandler from './middleware/errorHandles';
 const app = express();
 const port = 3002;
 
@@ -18,4 +19,5 @@ app.use(morgan('combined'));
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 routes(app);
+app.use(errorHandler);
 app.listen(port, () => console.log(`Server is listening on http://localhost:${port}`));
