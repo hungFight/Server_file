@@ -54,34 +54,60 @@ class FileStory {
         }
     };
     getFileImg = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        try {
-            const fileId = req.params.id;
-            const filePath = path.join(__dirname, '../../uploads/images', fileId + '.png'); // Path to the uploaded file
-            res.sendFile(filePath, (err) => {
+        const fileId = req.params.id;
+        const filePath = path.join(__dirname, '../../uploads/images', fileId + '.png'); // Path to the uploaded file
+        fs.access(filePath, fs.constants.F_OK, (err) => {
+            if (err) {
+                console.error('File not found:', err);
+                const filePathEr = path.join(__dirname, '../../uploads/error', 'fileNotFound' + '.png'); // Path to the uploaded file
+                return res.sendFile(filePathEr, (err) => {
+                    if (err) {
+                        console.error('Error sending img file:', err);
+                        return res.status(500).json({ message: 'Error sending file' });
+                    }
+                });
+            }
+            return res.sendFile(filePath, (err) => {
+                const filePathEr = path.join(__dirname, '../../uploads/error', 'fileNotFound' + '.png'); // Path to the uploaded file
                 if (err) {
-                    console.error('Error sending file:', err);
-                    res.status(404).json({ message: false });
+                    return res.sendFile(filePathEr, (err) => {
+                        if (err) {
+                            console.error('Error sending img file:', err);
+                            return res.status(500).json({ message: 'Error sending file' });
+                        }
+                    });
                 }
             });
-        } catch (error) {
-            console.error('Error reading file:', error);
-            next(error);
-        }
+        });
     };
     getFileVideo = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        try {
-            const fileId = req.params.id;
-            const filePath = path.join(__dirname, '../../uploads/videos', fileId + '.mp4'); // Path to the uploaded file
-            res.sendFile(filePath, (err) => {
+        const fileId = req.params.id;
+        const filePath = path.join(__dirname, '../../uploads/videos', fileId + '.mp4'); // Path to the uploaded file
+        fs.access(filePath, fs.constants.F_OK, (err) => {
+            if (err) {
+                console.error('File not found:', err);
+                const filePathEr = path.join(__dirname, '../../uploads/error', fileId + '.mp4'); // Path to the uploaded file
+                return res.sendFile(filePathEr, (err) => {
+                    if (err) {
+                        console.error('Error sending video file:', err);
+                        return res.status(500).json({ message: 'Error sending video file' });
+                    }
+                });
+            }
+            // File exists, send it as a response
+            return res.sendFile(filePath, (err) => {
                 if (err) {
                     console.error('Error sending file:', err);
-                    res.status(404).json({ message: false });
+                    const filePathEr = path.join(__dirname, '../../uploads/error', fileId + '.mp4'); // Path to the uploaded file
+                    return res.sendFile(filePathEr, (err) => {
+                        if (err) {
+                            console.error('Error sending file:', err);
+                            return res.status(500).json({ message: 'Error sending file' });
+                        }
+                    });
                 }
             });
-        } catch (error) {
-            console.error('Error reading file:', error);
-            next(error);
-        }
+        });
     };
     deleteFileImg = (req: express.Request, res: express.Response, next: express.NextFunction) => {
         try {
