@@ -4,7 +4,28 @@ import path from 'path';
 class FileStory {
     addFile = (req: express.Request, res: express.Response, next: express.NextFunction) => {
         try {
-            console.log(req.body, 'body_ol');
+            if (req.body.ids?.length) {
+                req.body.ids = req.body.ids?.map((id: any) => {
+                    if (req.body.id_sort) {
+                        let TT = '';
+                        let DD = '';
+                        req.body.title.forEach((r: any) => {
+                            const tt = JSON.parse(r);
+                            if (tt.id === id.id_client) TT = tt.title;
+                        });
+                        req.body.id_sort.forEach((r: any) => {
+                            const tt = JSON.parse(r);
+                            if (tt.id === id.id_client) DD = tt.id_sort;
+                        });
+                        id = {
+                            ...id,
+                            title: TT,
+                            id_sort: DD,
+                        };
+                    }
+                    return id;
+                });
+            }
             // Generate a unique filename using UUID
             if (req.body.old_id) {
                 const filePath = path.join(

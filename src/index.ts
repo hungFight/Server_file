@@ -31,6 +31,25 @@ app.use((req: any, res: any, next) => {
     res.redisClient = redisClient;
     next();
 });
+app.get('/index', (req, res) => {
+    const documents = [
+        { id: 1, title: 'Document 1', content: 'This is the content of Document 1' },
+        { id: 2, title: 'Document 2', content: 'Content of Document 2' },
+        { id: 4, title: 'Super Document 2', content: 'Content of Document 2' },
+        { id: 3, title: 'Another Document', content: 'Lorem ipsum dolor sit amet' },
+    ];
+    const newD = documents.map((a, b) => {
+        console.log(a, b);
+        const startIndex = a.title.indexOf('Document');
+        if (startIndex === -1) {
+            console.log({ start: -1, end: -1 });
+        }
+        const endIndex = startIndex + a.title.length - 1;
+        console.log({ start: startIndex, end: endIndex });
+    });
+
+    res.json(newD);
+});
 app.use(ExcessiveRequests.ip);
 app.use(jwtAuth.verifyToken);
 routes(app);
