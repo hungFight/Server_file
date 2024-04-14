@@ -4,28 +4,6 @@ import path from 'path';
 class FileStory {
     addFile = (req: express.Request, res: express.Response, next: express.NextFunction) => {
         try {
-            if (req.body.ids?.length) {
-                req.body.ids = req.body.ids?.map((id: any) => {
-                    if (req.body.id_sort) {
-                        let TT = '';
-                        let DD = '';
-                        req.body.title.forEach((r: any) => {
-                            const tt = JSON.parse(r);
-                            if (tt.id === id.id_client) TT = tt.title;
-                        });
-                        req.body.id_sort.forEach((r: any) => {
-                            const tt = JSON.parse(r);
-                            if (tt.id === id.id_client) DD = tt.id_sort;
-                        });
-                        id = {
-                            ...id,
-                            title: TT,
-                            id_sort: DD,
-                        };
-                    }
-                    return id;
-                });
-            }
             // Generate a unique filename using UUID
             if (req.body.old_id) {
                 const filePath = path.join(
@@ -135,6 +113,29 @@ class FileStory {
             const fileIds: string[] = req.body.ids;
             fileIds.forEach((f) => {
                 const filePath = path.join(__dirname, '../../uploads/images', f + '.png'); // Path to the uploaded file
+                // File does not exist, continue with the current filename
+                fs.access(filePath, fs.constants.F_OK, (err) => {
+                    if (!err)
+                        fs.unlink(filePath, (err) => {
+                            if (err) {
+                                console.error('Error deleting file:', err);
+                                return res.status(500).json(false);
+                            }
+                        });
+                });
+            });
+
+            return res.status(200).json(true);
+        } catch (error) {
+            console.error('Error reading file:', error);
+            next(error);
+        }
+    };
+    deleteFileVideo = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        try {
+            const fileIds: string[] = req.body.ids;
+            fileIds.forEach((f) => {
+                const filePath = path.join(__dirname, '../../uploads/videos', f + '.mp4'); // Path to the uploaded file
                 // File does not exist, continue with the current filename
                 fs.access(filePath, fs.constants.F_OK, (err) => {
                     if (!err)

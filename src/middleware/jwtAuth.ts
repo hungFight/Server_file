@@ -45,13 +45,15 @@ class JWTVERIFY {
                                 try {
                                     jwt.verify(tokenc, code, (err: any, user: any) => {
                                         // user: {id:string;  iat: number; exp: number}
-                                        // if (user.id !== userId) {
-                                        //     deleteToken(res);
-                                        //     return res.status(403).json({ status: 0, message: 'Token is not valid' });
-                                        // }
+                                        console.log(user);
+
+                                        if (user?.id !== userId || err) {
+                                            deleteToken(res);
+                                            return res.status(403).json({ status: 0, message: 'Token is not valid' });
+                                        }
                                         jwt.verify(refreshToken, code, (err, data: any) => {
                                             // data: {id:string;iat: number; exp: number}
-                                            if (data.id === userId && dataRes.accept) {
+                                            if (data.id === userId && dataRes.accept && !err) {
                                                 next();
                                             } else {
                                                 deleteToken(res);

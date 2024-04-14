@@ -7,4 +7,5 @@ router.post('/addFiles', upload.array('file'), fileController.addFile);
 router.get('/getFileImg/:id', fileController.getFileImg);
 router.get('/getFileVideo/:id', fileController.getFileVideo);
 router.post('/deleteFileImg', fileController.deleteFileImg);
+router.post('/deleteFileVideo', fileController.deleteFileVideo);
 export default router;
