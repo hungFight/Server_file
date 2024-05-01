@@ -48,7 +48,6 @@ class JWTVERIFY {
                                         console.log(user);
 
                                         if (user?.id !== userId || err) {
-                                            deleteToken(res);
                                             return res.status(403).json({ status: 0, message: 'Token is not valid' });
                                         }
                                         jwt.verify(refreshToken, code, (err, data: any) => {
@@ -56,7 +55,6 @@ class JWTVERIFY {
                                             if (data.id === userId && dataRes.accept && !err) {
                                                 next();
                                             } else {
-                                                deleteToken(res);
                                                 return res.status(401).json({ status: 8888, message: 'Unauthorized!' });
                                             }
                                         });

@@ -32,23 +32,26 @@ app.use((req: any, res: any, next) => {
     next();
 });
 app.get('/index', (req, res) => {
-    const documents = [
-        { id: 1, title: 'Document 1', content: 'This is the content of Document 1' },
-        { id: 2, title: 'Document 2', content: 'Content of Document 2' },
-        { id: 4, title: 'Super Document 2', content: 'Content of Document 2' },
-        { id: 3, title: 'Another Document', content: 'Lorem ipsum dolor sit amet' },
+    const promises = [
+        Promise.resolve(42),
+        Promise.reject(new Error('Something went wrong')),
+        Promise.resolve('Success'),
     ];
-    const newD = documents.map((a, b) => {
-        console.log(a, b);
-        const startIndex = a.title.indexOf('Document');
-        if (startIndex === -1) {
-            console.log({ start: -1, end: -1 });
-        }
-        const endIndex = startIndex + a.title.length - 1;
-        console.log({ start: startIndex, end: endIndex });
-    });
+    Promise.allSettled(promises)
+        .then((results) => {
+            console.log(results, 'results');
 
-    res.json(newD);
+            results.forEach((result) => {
+                if (result.status === 'fulfilled') {
+                    console.log('Fulfilled:', result.value);
+                } else if (result.status === 'rejected') {
+                    console.log('Rejected:', result.reason.message);
+                }
+            });
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
 });
 app.use(ExcessiveRequests.ip);
 app.use(jwtAuth.verifyToken);
