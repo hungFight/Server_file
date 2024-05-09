@@ -11,17 +11,14 @@ class FileStory {
                     req.body.type === 'image' ? '../../uploads/images' : '../../uploads/video',
                     req.body.old_id + req.body.tail,
                 ); // Path to the uploaded file
-                fs.access(filePath, fs.constants.F_OK, (err) => {
-                    if (!err) {
-                        fs.unlink(filePath, (err) => {
-                            if (err) {
-                                console.error('Error deleting file:', err);
-                            } else {
-                                console.error('deleting file successful');
-                            }
-                        });
-                    }
-                });
+                if (fs.existsSync(filePath))
+                    fs.unlink(filePath, (err) => {
+                        if (err) {
+                            console.error('Error deleting file:', err);
+                        } else {
+                            console.error('deleting file successful');
+                        }
+                    });
                 // File does not exist, continue with the current filename
             } else if (req.body.old_ids) {
                 req.body.old_ids.map((id: string) => {
@@ -30,16 +27,14 @@ class FileStory {
                         req.body.type === 'image' ? '../../uploads/images' : '../../uploads/video',
                         id + req.body.tail,
                     ); // Path to the uploaded file
-                    fs.access(filePath, fs.constants.F_OK, (err) => {
-                        if (!err)
-                            fs.unlink(filePath, (err) => {
-                                if (err) {
-                                    console.error('Error deleting file:', err);
-                                } else {
-                                    console.error('deleting file successful');
-                                }
-                            });
-                    });
+                    if (fs.existsSync(filePath))
+                        fs.unlink(filePath, (err) => {
+                            if (err) {
+                                console.error('Error deleting file.:', err);
+                            } else {
+                                console.error('deleting file successful');
+                            }
+                        });
                     // File does not exist, continue with the current filename
                 });
             }

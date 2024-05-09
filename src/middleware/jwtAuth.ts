@@ -69,11 +69,9 @@ class JWTVERIFY {
                             return res.status(401).json({ status: 0, message: "You're not authenticated!" });
                         }
                     } else {
-                        deleteToken(res);
                         return res.status(401).json({ status: 8888, message: 'Unauthorized!' });
                     }
                 } else {
-                    deleteToken(res);
                     return res.status(401).json({ status: 0, message: 'Expires refreshToken!' });
                 }
             });

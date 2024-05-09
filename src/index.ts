@@ -16,7 +16,7 @@ app.use(cookieParser('123'));
 app.use(
     cors({
         credentials: true,
-        origin: [`${process.env.SERVERNODE_URL}`, 'http://localhost:3000'],
+        origin: [`${process.env.SERVER_NODE_URL}`],
     }),
 );
 const redisClient = new Redis({

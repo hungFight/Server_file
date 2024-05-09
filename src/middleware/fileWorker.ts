@@ -22,34 +22,31 @@ const storage = multer.diskStorage({
             const tail = typeImage ? '.png' : '.mp4';
             // Set the filename to request body
             const filePath = path.join('uploads/images', filename + tail);
-            fs.access(filePath, fs.constants.F_OK, (err) => {
-                if (!err) {
-                    // File already exists, generate a new filename
-                    const newFilename = primaryKey();
-                    console.log('File already exists, generating a new filename');
-                    req.body.ids.push({
-                        id: newFilename,
-                        type: file.mimetype.split('/')[0],
-                        tail: typeImage ? 'png' : file.mimetype.split('/')[1],
-                        name: file.originalname.split('@_id_***_get_$')[0],
-                        id_client: file.originalname.split('@_id_***_get_$')[1],
-                    });
-                    req.body.type = file.mimetype.split('/')[0];
-                    req.body.tail = tail;
-                    cb(null, newFilename + tail);
-                } else {
-                    req.body.ids.push({
-                        id: filename,
-                        type: file.mimetype.split('/')[0],
-                        tail: typeImage ? 'png' : file.mimetype.split('/')[1],
-                        name: file.originalname.split('@_id_***_get_$')[0],
-                        id_client: file.originalname.split('@_id_***_get_$')[1],
-                    });
-                    req.body.type = file.mimetype.split('/')[0];
-                    req.body.tail = tail;
-                    cb(null, filename + tail);
-                }
-            });
+            if (fs.existsSync(filePath)) {
+                const newFilename = primaryKey();
+                console.log('File already exists, generating a new filename');
+                req.body.ids.push({
+                    id: newFilename,
+                    type: file.mimetype.split('/')[0],
+                    tail: typeImage ? 'png' : file.mimetype.split('/')[1],
+                    name: file.originalname.split('@_id_***_get_$')[0],
+                    id_client: file.originalname.split('@_id_***_get_$')[1],
+                });
+                req.body.type = file.mimetype.split('/')[0];
+                req.body.tail = tail;
+                cb(null, newFilename + tail);
+            } else {
+                req.body.ids.push({
+                    id: filename,
+                    type: file.mimetype.split('/')[0],
+                    tail: typeImage ? 'png' : file.mimetype.split('/')[1],
+                    name: file.originalname.split('@_id_***_get_$')[0],
+                    id_client: file.originalname.split('@_id_***_get_$')[1],
+                });
+                req.body.type = file.mimetype.split('/')[0];
+                req.body.tail = tail;
+                cb(null, filename + tail);
+            }
         } catch (error: any) {
             cb(error, '');
         }
