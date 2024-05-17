@@ -6,11 +6,15 @@ import getMAC from 'getmac';
 // status = 0 is login again
 // status = 9999 is server busy
 // status = 8888 is Unauthorized
-function deleteToken(res: express.Response) {
-    console.log('delete coookies');
-    res.clearCookie('tks');
-    res.clearCookie('k_user');
+interface PropsRefreshToken {
+    refreshToken: string;
+    accept: boolean;
+    mac: string;
+    userId: string;
+    status: { name: 'login' | 'logout'; dateTime: Date; ip: string }[];
+    userAgent: string;
 }
+
 class JWTVERIFY {
     verifyToken = async (req: express.Request, res: any, next: express.NextFunction) => {
         try {
@@ -25,14 +29,8 @@ class JWTVERIFY {
                     return res.status(404).json('Error getting refresh token: ' + err);
                 }
                 if (dataRD) {
-                    const newDataD: {
-                        refreshToken: string;
-                        accept: boolean;
-                        ip: string;
-                        mac: string;
-                        id_user: string;
-                    }[] = JSON.parse(dataRD);
-                    const newDataFiltered = newDataD.filter((g) => g.id_user === userId && g.mac === IP_MAC);
+                    const newDataD: PropsRefreshToken[] = JSON.parse(dataRD);
+                    const newDataFiltered = newDataD.filter((g) => g.userId === userId && g.mac === IP_MAC);
                     if (newDataFiltered.length) {
                         const dataRes = newDataFiltered[0];
                         const my = dataRes.refreshToken.split('@_@');
@@ -60,12 +58,10 @@ class JWTVERIFY {
                                         });
                                     });
                                 } catch (error) {
-                                    console.log(error);
-                                    return res.status(403);
+                                    return res.status(403).json(error);
                                 }
                             }
                         } else {
-                            deleteToken(res);
                             return res.status(401).json({ status: 0, message: "You're not authenticated!" });
                         }
                     } else {
