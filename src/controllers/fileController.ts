@@ -54,24 +54,25 @@ class FileStory {
             if (err) {
                 console.error('File not found:', err);
                 const filePathEr = path.join(__dirname, '../../uploads/error', 'fileNotFound' + '.png'); // Path to the uploaded file
-                return res.sendFile(filePathEr, (err) => {
+                res.sendFile(filePathEr, (err) => {
                     if (err) {
                         console.error('Error sending img file:', err);
-                        return res.status(500).json({ message: 'Error sending file' });
+                        res.status(500).json({ message: 'Error sending file' });
+                    }
+                });
+            } else {
+                res.sendFile(filePath, (err) => {
+                    const filePathEr = path.join(__dirname, '../../uploads/error', 'fileNotFound' + '.png'); // Path to the uploaded file
+                    if (err) {
+                        res.sendFile(filePathEr, (err) => {
+                            if (err) {
+                                console.error('Error sending img file:', err);
+                                res.status(500).json({ message: 'Error sending file' });
+                            }
+                        });
                     }
                 });
             }
-            return res.sendFile(filePath, (err) => {
-                const filePathEr = path.join(__dirname, '../../uploads/error', 'fileNotFound' + '.png'); // Path to the uploaded file
-                if (err) {
-                    return res.sendFile(filePathEr, (err) => {
-                        if (err) {
-                            console.error('Error sending img file:', err);
-                            return res.status(500).json({ message: 'Error sending file' });
-                        }
-                    });
-                }
-            });
         });
     };
     getFileVideo = (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -81,26 +82,27 @@ class FileStory {
             if (err) {
                 console.error('File not found:', err);
                 const filePathEr = path.join(__dirname, '../../uploads/error', fileId + '.mp4'); // Path to the uploaded file
-                return res.sendFile(filePathEr, (err) => {
+                res.sendFile(filePathEr, (err) => {
                     if (err) {
                         console.error('Error sending video file:', err);
                         return res.status(500).json({ message: 'Error sending video file' });
                     }
                 });
+            } else {
+                // File exists, send it as a response
+                res.sendFile(filePath, (err) => {
+                    if (err) {
+                        console.error('Error sending file:', err);
+                        const filePathEr = path.join(__dirname, '../../uploads/error', fileId + '.mp4'); // Path to the uploaded file
+                        res.sendFile(filePathEr, (err) => {
+                            if (err) {
+                                console.error('Error sending file:', err);
+                                return res.status(500).json({ message: 'Error sending file' });
+                            }
+                        });
+                    }
+                });
             }
-            // File exists, send it as a response
-            return res.sendFile(filePath, (err) => {
-                if (err) {
-                    console.error('Error sending file:', err);
-                    const filePathEr = path.join(__dirname, '../../uploads/error', fileId + '.mp4'); // Path to the uploaded file
-                    return res.sendFile(filePathEr, (err) => {
-                        if (err) {
-                            console.error('Error sending file:', err);
-                            return res.status(500).json({ message: 'Error sending file' });
-                        }
-                    });
-                }
-            });
         });
     };
     deleteFileImg = (req: express.Request, res: express.Response, next: express.NextFunction) => {
