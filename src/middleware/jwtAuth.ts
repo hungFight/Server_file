@@ -19,7 +19,7 @@ class JWTVERIFY {
     verifyToken = async (req: express.Request, res: any, next: express.NextFunction) => {
         try {
             const userId = req.cookies.k_user;
-            const authHeader = req.cookies.tks;
+            const authHeader = req.signedCookies.tks;
             const IP_MAC = getMAC();
             const redisClient: Redis = res.redisClient;
             const IP_USER = req.headers['user-agent'] ?? '';

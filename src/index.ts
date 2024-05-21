@@ -12,7 +12,7 @@ import ExcessiveRequests from './middleware/ExcessiveRequests';
 const app = express();
 const port = 3002;
 
-app.use(cookieParser('123'));
+app.use(cookieParser(process.env.SECRET));
 app.use(
     cors({
         credentials: true,
