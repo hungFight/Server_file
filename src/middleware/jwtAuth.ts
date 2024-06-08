@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import ServerError from '../utils/errors/ServerError';
 import { Redis } from 'ioredis';
 import getMAC from 'getmac';
+import { getRedis } from '../connectDatabase/connect.Redis';
 // status = 0 is login again
 // status = 9999 is server busy
 // status = 8888 is Unauthorized
@@ -21,9 +22,8 @@ class JWTVERIFY {
             const userId = req.cookies.k_user;
             const authHeader = req.signedCookies.tks;
             const IP_MAC = getMAC();
-            const redisClient: Redis = res.redisClient;
             const IP_USER = req.headers['user-agent'] ?? '';
-            redisClient.get(userId + 'refreshToken', (err, dataRD) => {
+            getRedis().get(userId + 'refreshToken', (err, dataRD) => {
                 // save token into redis
                 if (err) {
                     return res.status(404).json('Error getting refresh token: ' + err);

@@ -9,6 +9,7 @@ import { Redis } from 'ioredis';
 import jwtAuth from './middleware/jwtAuth';
 require('dotenv').config();
 import ExcessiveRequests from './middleware/ExcessiveRequests';
+import { initRedis } from './connectDatabase/connect.Redis';
 const app = express();
 const port = 3002;
 
@@ -19,18 +20,10 @@ app.use(
         origin: [`${process.env.SERVER_NODE_URL}`],
     }),
 );
-const redisClient = new Redis({
-    host: process.env.REDIS_HOST,
-    port: Number(process.env.REDIS_PORT),
-    password: process.env.REDIS_PASSWORD,
-});
 app.use(morgan('combined'));
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
-app.use((req: any, res: any, next) => {
-    res.redisClient = redisClient;
-    next();
-});
+initRedis();
 app.get('/index', (req, res) => {
     const promises = [
         Promise.resolve(42),
